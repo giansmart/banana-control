@@ -4,7 +4,7 @@ let canvas = document.getElementById("canvas");
 const widthCamera = 720;
 const heightCamera = 720;
 const yellow = {r: 255, g: 255, b: 0}
-const tresholdDistanceColor = 220;
+const tresholdDistanceColor = 160;
 
 function showCamera(){
     let opcions = {
@@ -35,9 +35,11 @@ function processCamera(){
     //let pixelTopYellow = null;
     //let minorDistance = null;
 
-    let sumX = 0;
+    /*let sumX = 0;
     let sumY = 0;
-    let count = 0;
+    let count = 0;*/
+
+    let bananas = []
 
     for(let p=0; p<pixels.length; p += 4){
         let red = pixels[p]
@@ -50,17 +52,39 @@ function processCamera(){
             Math.pow(yellow.r - red, 2) + Math.pow(yellow.g - green, 2) + Math.pow(yellow.b - blue, 2)
         )
         if(distance < tresholdDistanceColor){
+            /*
             pixels[p] = 255; //r
             pixels[p + 1] =  0; //g
             pixels[p + 2] = 0; //b
-
-            count++;
+            */
 
             let y = Math.floor(p/4/canvas.width);
             let x = (p/4) % canvas.width;
+
+            //Group pixels
+            if(bananas.length == 0){
+                let banana = new Banana(x, y);
+                bananas.push(banana);
+
+            } else {
+                let founded = false;
+                for(let i=0; i < bananas.length; i++) {
+                    if(bananas[i].isNear(x, y)) {
+                        bananas[i].addPixel(x, y);
+                        founded = true;
+                        break;
+                    }
+                }
+
+                if (!founded) {
+                    let bann = new Banana(x, y);
+                    bananas.push(bann);
+                }
+            }
             
-            sumX += x;
+            /*sumX += x;
             sumY += y;
+            count++;*/
 
         }
 
@@ -76,11 +100,15 @@ function processCamera(){
     }
     ctx.putImageData(imgData, 0, 0);
 
-    if(count > 0){
+    for(let i=0; i<bananas.length; i++) {
+        bananas[i].draw(ctx);
+    }
+    /*if(count > 0){
         ctx.fillStyle = "#00f";
         ctx.beginPath();
         ctx.arc(sumX/count, sumY/count, 10, 0, 2 * Math.PI);
         ctx.fill();
-    }
+    }*/
+
     setTimeout(processCamera, 20)
 }
