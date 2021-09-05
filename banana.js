@@ -16,21 +16,30 @@ class Banana{
     }
 
     isNear(x, y) {
-        let minorDistance = -1;
-        for(let i=0; i<this.pixels.length; i++){
-            let distance = Math.sqrt(
-                Math.pow(this.pixels[i].x - x, 2) + Math.pow(this.pixels[i].y - y, 2)
-            );
-            if (minorDistance == -1 || distance < minorDistance) {
-                minorDistance = distance;
-            }
+        //Review if pixel is inside the rectangle
+        if (x >= this.xMin && x <= this.xMax && 
+            y >= this.yMin && y <= this.yMax) {
+            return true
+        }
+        let distX = 0;
+        let distY = 0;
+
+        if (x < this.xMin) {
+            distX = this.xMin - x;
+        }
+        if (x > this.xMax) {
+            distX = x - this.xMax;
+        }
+        if (y < this.yMin){
+            distY = this.yMin - y;
+        }
+        if (y > this.yMax) {
+            distY = y - this.yMax;
         }
 
-        if(minorDistance <= 50) {
-            return true;
-        }
+        let dist = distX - distY;
 
-        return false;
+        return dist < 100
     }
 
     addPixel(x, y) {

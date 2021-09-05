@@ -100,8 +100,17 @@ function processCamera(){
     }
     ctx.putImageData(imgData, 0, 0);
 
+    bananas = joinIntersections(bananas);
+
     for(let i=0; i<bananas.length; i++) {
-        bananas[i].draw(ctx);
+        let width = bananas[i].xMax - bananas[i].xMin;
+        let height = bananas[i].yMax - bananas[i].yMin;
+        let area = width * height;
+        console.log(area)
+        if (area > 1500) {
+            bananas[i].draw(ctx);
+        }
+        
     }
     /*if(count > 0){
         ctx.fillStyle = "#00f";
@@ -111,4 +120,41 @@ function processCamera(){
     }*/
 
     setTimeout(processCamera, 20)
+}
+
+
+function joinIntersections(bananas) {
+    let exit = false;
+    for(let i=0; i < bananas.length; i++) {
+        for(let j=0; j < bananas.length; j++) {
+            if (i == j) continue;
+            let ban1 = bananas[i];
+            let ban2 = bananas[j];
+
+            let intercection = ban1.xMin < ban2.xMax &&
+                        ban1.xMax > ban2.xMin &&
+                        ban1.yMin < ban2.xMax &&
+                        ban1.yMax > ban2.yMin;
+            
+            if (intercection) {
+                //Pass pixels from j to i
+                for(let p=0; p < ban2.pixels.length; p++) {
+                    ban1.addPixel(ban1.pixels[p].x, ban2.pixels[p].y);
+                }
+                //erase j
+                bananas.splice(j, 1);
+                exit = true;
+                break;
+            }
+        }
+        if (exit) {
+            break;
+        }
+    }
+
+    if (exit) {
+        return joinIntersections(bananas);
+    } else {
+        return bananas;
+    }
 }
