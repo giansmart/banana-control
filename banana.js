@@ -6,6 +6,7 @@ class Banana{
     xMax = 0;
     yMin = 0;
     yMax = 0;
+    grades = 0;
 
     constructor(x, y) {
         this.addPixel(x, y);
@@ -69,5 +70,55 @@ class Banana{
 
         ctx.rect(x, y, width, height);
         ctx.stroke();
+
+        //Draw circle at center
+        let Xcenter = x + (width/2);
+        let Ycenter = y + (height/2);
+
+        ctx.beginPath();
+        ctx.fillStyle = "#00f";
+        ctx.arc(Xcenter, Ycenter, 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        let sumYleft = 0;
+        let countYleft = 0;
+        let sumYright = 0;
+        let countYright = 0;
+
+        for(let i=0; i<this.pixels.length; i++){
+            if(this.pixels[i].x <= (x + (width * 0.1))) {
+                sumYleft += this.pixels[i].y;
+                countYleft++
+            } else if (this.pixels[i].x >= (x + (width * 0.9))) {
+                sumYright += this.pixels[i].y;
+                countYright++;
+            }
+        }
+
+        ctx.beginPath();
+        ctx.fillStyle = "#00f";
+        ctx.arc(this.xMin, (sumYleft/countYleft), 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = "#00f";
+        ctx.arc(this.xMax, (sumYright/countYright), 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.beginPath()
+        ctx.strokeStyle = "#0f0";
+        ctx.moveTo(this.xMin, (sumYleft/countYleft))
+        ctx.lineTo(this.xMax, (sumYright/countYright))
+        ctx.stroke();
+
+        let diffY = (sumYright/countYright) - (sumYleft/countYleft);
+        let diffX = this.xMax - this.xMin
+
+        let rad = Math.atan(diffY/diffX)
+        let grades = Math.round(rad * (180/Math.PI))
+        console.log(grades)
+
+        this.grades = grades
+
     }
 }

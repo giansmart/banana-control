@@ -6,3 +6,13 @@
     transform: scale(-1,1);
     
 }
+
+#carrito{
+    display: inline-block;
+    vertical-align: top;
+    padding: 200px;
+}
+
+#imgCarrito{
+    transform: rotate(270deg);
+}

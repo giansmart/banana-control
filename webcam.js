@@ -5,6 +5,7 @@ const widthCamera = 720;
 const heightCamera = 720;
 const yellow = {r: 255, g: 255, b: 0}
 const tresholdDistanceColor = 160;
+let sensibility = 1.3;
 
 function showCamera(){
     let opcions = {
@@ -101,16 +102,30 @@ function processCamera(){
     ctx.putImageData(imgData, 0, 0);
 
     bananas = joinIntersections(bananas);
+    let bigger = null;
+    let greatherSize = -1;
+
 
     for(let i=0; i<bananas.length; i++) {
         let width = bananas[i].xMax - bananas[i].xMin;
         let height = bananas[i].yMax - bananas[i].yMin;
         let area = width * height;
-        console.log(area)
+        //console.log(area)
         if (area > 1500) {
-            bananas[i].draw(ctx);
+            if (bigger === null || area > greatherSize) {
+                bigger = bananas[i];
+                greatherSize = area;
+            }
+            //bananas[i].draw(ctx);
         }
         
+    }
+    if (bigger !== null) {
+        bigger.draw(ctx);
+        let baseGrad = 270;
+        let newGrades =  baseGrad + (bigger.grades * (-1)) * sensibility;
+        document.getElementById("info").innerHTML = bigger.grades;
+        document.getElementById("imgCarrito").style.transform = "rotate(" + newGrades +"deg)"
     }
     /*if(count > 0){
         ctx.fillStyle = "#00f";
